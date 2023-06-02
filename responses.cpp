@@ -23,7 +23,7 @@ std::unordered_map<std::string, std::vector<std::string>> responseMap = {
     {"am I black", {"No, you are not", "Are you trying to become black now?", "Yes, I think you are black."}},
     {"help me", {"How can I help?", "Sure.", "Maybe."}},
     {"help", {"How can I help?", "Sure.", "Maybe."}},
-    {"what is Ishinee's age", {"We don't know.", "The age of Ishinee is a miracle."}},
+    {"what is Ishinee's age", {"We don't know.", "The age of Ishinee is a miracle.", "No one knows."}},
     {"test", {"this was a test!"}},
     {"are you the real slim Shady?", {"Yes, I am.", "Of course dawg.", "Nah, sorry."}},
     {"are you the real slim shady?", {"Yes, I am.", "Of course dawg.", "Nah, sorry."}},
@@ -33,4 +33,5 @@ std::unordered_map<std::string, std::vector<std::string>> responseMap = {
     {"social", {"discord.gg/q2t67m35gd"}},
     {"server", {"discord.gg/q2t67m35gd"}},
     {"discord server", {"discord.gg/q2t67m35gd"}},
+    //basic template: {"user message", {"Bot reply 1", "Bot reply 2", "etc."}}
 };
