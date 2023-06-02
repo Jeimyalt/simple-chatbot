@@ -28,4 +28,9 @@ std::unordered_map<std::string, std::vector<std::string>> responseMap = {
     {"are you the real slim Shady?", {"Yes, I am.", "Of course dawg.", "Nah, sorry."}},
     {"are you the real slim shady?", {"Yes, I am.", "Of course dawg.", "Nah, sorry."}},
     {"why do you only have 3 reply options per message", {"Because I can.", "I don't know, I just got here.", "Sammy liked it that way."}},
+    {"discord", {"discord.gg/q2t67m35gd"}},
+    {"socials", {"discord.gg/q2t67m35gd"}},
+    {"social", {"discord.gg/q2t67m35gd"}},
+    {"server", {"discord.gg/q2t67m35gd"}},
+    {"discord server", {"discord.gg/q2t67m35gd"}},
 };
