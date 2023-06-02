@@ -49,7 +49,6 @@ int main() {
     SetConsoleTitleA("Fake-AI");
     std::cout << "Chat Application\n";
     std::cout << "Enter 'exit' to quit.\n";
-    std::cout << "Please only use lowercase letters - for now.\n";
 
     while (true) {
         std::string userInput;
