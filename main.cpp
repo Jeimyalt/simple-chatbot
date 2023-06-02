@@ -6,18 +6,24 @@
 #include <ctime>
 #include <Windows.h>
 #include <thread>
+#include <regex>
+#include <algorithm> 
+#include <cctype>
 #include "responses.h"
 
 std::string previousQuery = "";
 
 std::string generateResponse(const std::string& userInput) {
-    std::string response = "I'm sorry, I don't know what you mean.";
+    std::string response = "I'm sorry, I don't have an answer for that.";
     std::string lowerCaseInput = userInput;
     std::transform(lowerCaseInput.begin(), lowerCaseInput.end(), lowerCaseInput.begin(), ::tolower);
 
     for (const auto& pair : responseMap) {
         const std::string& keyword = pair.first;
-        if (lowerCaseInput.find(keyword) != std::string::npos) {
+        std::string pattern = "\\b" + keyword + "\\b";
+        std::regex regexPattern(pattern, std::regex_constants::icase); // Use std::regex_constants::icase for case-insensitive matching
+
+        if (std::regex_search(lowerCaseInput, regexPattern)) {
             const std::vector<std::string>& possibleResponses = pair.second;
             int index = std::rand() % possibleResponses.size();
             response = possibleResponses[index];
@@ -73,7 +79,7 @@ int main() {
         }
 
         std::string response = generateResponse(userInput);
-        std::cout << "AI: " << response << "\n";
+        std::cout << "Sammygpt: " << response << "\n";
     }
 
     return 0;
