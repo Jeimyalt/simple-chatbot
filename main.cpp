@@ -18,17 +18,29 @@ std::string generateResponse(const std::string& userInput) {
     std::string lowerCaseInput = userInput;
     std::transform(lowerCaseInput.begin(), lowerCaseInput.end(), lowerCaseInput.begin(), ::tolower);
 
+    std::string bestMatch;
+    int bestMatchCount = 0;
+
     for (const auto& pair : responseMap) {
         const std::string& keyword = pair.first;
-        std::string pattern = "\\b" + keyword + "\\b";
-        std::regex regexPattern(pattern, std::regex_constants::icase); // Use std::regex_constants::icase for case-insensitive matching
+        int matchCount = 0;
 
-        if (std::regex_search(lowerCaseInput, regexPattern)) {
-            const std::vector<std::string>& possibleResponses = pair.second;
-            int index = std::rand() % possibleResponses.size();
-            response = possibleResponses[index];
-            break;
+        for (char c : lowerCaseInput) {
+            if (keyword.find(c) != std::string::npos) {
+                matchCount++;
+            }
         }
+
+        if (matchCount > bestMatchCount) {
+            bestMatchCount = matchCount;
+            bestMatch = keyword;
+        }
+    }
+
+    if (bestMatchCount >= lowerCaseInput.length() - 1 && !bestMatch.empty()) {
+        const std::vector<std::string>& possibleResponses = responseMap[bestMatch];
+        int index = std::rand() % possibleResponses.size();
+        response = possibleResponses[index];
     }
 
     if (lowerCaseInput == previousQuery) {
@@ -42,6 +54,7 @@ std::string generateResponse(const std::string& userInput) {
 
     return response;
 }
+
 
 int main() {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
