@@ -7,40 +7,51 @@
 #include <Windows.h>
 #include <thread>
 #include <regex>
-#include <algorithm> 
-#include <cctype>
 #include "responses.h"
 
 std::string previousQuery = "";
+
+bool hasSlur(const std::string& userInput) {
+    std::vector<std::string> slurs = {
+        "fag",
+        "fags",
+        "faggot",
+        "faggots",
+        "nigger",
+        "niggers",
+        "nig",
+        "nigs",
+        // Add more slurs as needed
+    };
+
+    std::string lowerCaseInput = userInput;
+    std::transform(lowerCaseInput.begin(), lowerCaseInput.end(), lowerCaseInput.begin(), ::tolower);
+
+    for (const std::string& slur : slurs) {
+        if (lowerCaseInput.find(slur) != std::string::npos) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 std::string generateResponse(const std::string& userInput) {
     std::string response = "I'm sorry, I don't have an answer for that.";
     std::string lowerCaseInput = userInput;
     std::transform(lowerCaseInput.begin(), lowerCaseInput.end(), lowerCaseInput.begin(), ::tolower);
 
-    std::string bestMatch;
-    int bestMatchCount = 0;
-
     for (const auto& pair : responseMap) {
         const std::string& keyword = pair.first;
-        int matchCount = 0;
+        std::string pattern = "\\b" + keyword + "\\b";
+        std::regex regexPattern(pattern, std::regex_constants::icase);
 
-        for (char c : lowerCaseInput) {
-            if (keyword.find(c) != std::string::npos) {
-                matchCount++;
-            }
+        if (std::regex_search(lowerCaseInput, regexPattern)) {
+            const std::vector<std::string>& possibleResponses = pair.second;
+            int index = std::rand() % possibleResponses.size();
+            response = possibleResponses[index];
+            break;
         }
-
-        if (matchCount > bestMatchCount) {
-            bestMatchCount = matchCount;
-            bestMatch = keyword;
-        }
-    }
-
-    if (bestMatchCount >= lowerCaseInput.length() - 1 && !bestMatch.empty()) {
-        const std::vector<std::string>& possibleResponses = responseMap[bestMatch];
-        int index = std::rand() % possibleResponses.size();
-        response = possibleResponses[index];
     }
 
     if (lowerCaseInput == previousQuery) {
@@ -51,10 +62,8 @@ std::string generateResponse(const std::string& userInput) {
     }
 
     previousQuery = lowerCaseInput;
-
     return response;
 }
-
 
 int main() {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
@@ -70,6 +79,12 @@ int main() {
 
         if (userInput == "exit") {
             break;
+        }
+
+        if (hasSlur(userInput)) {
+            std::cout << "Sammygpt: Slur detected. Closing the program." << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(700));
+            exit(0);
         }
 
         if (userInput == "bye") {
