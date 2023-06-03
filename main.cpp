@@ -40,27 +40,52 @@ std::string generateResponse(const std::string& userInput) {
     std::string lowerCaseInput = userInput;
     std::transform(lowerCaseInput.begin(), lowerCaseInput.end(), lowerCaseInput.begin(), ::tolower);
 
+    int bestMatchCount = 0;
+    std::string bestMatch;
+
     for (const auto& pair : responseMap) {
         const std::string& keyword = pair.first;
-        std::string pattern = "\\b" + keyword + "\\b";
-        if (lowerCaseInput.find(keyword) != std::string::npos) {
-            const std::vector<std::string>& possibleResponses = pair.second;
-            int index = std::rand() % possibleResponses.size();
-            response = possibleResponses[index];
-            break;
+        int matchCount = 0;
+        int mismatchCount = 0;
+
+        for (size_t i = 0; i < keyword.length(); ++i) {
+            if (i < lowerCaseInput.length() && keyword[i] == lowerCaseInput[i]) {
+                matchCount++;
+            }
+            else {
+                mismatchCount++;
+            }
+        }
+
+        if (matchCount > bestMatchCount && mismatchCount <= 1) {
+            bestMatchCount = matchCount;
+            bestMatch = keyword;
         }
     }
 
-    if (lowerCaseInput == previousQuery) {
+    if (bestMatchCount >= lowerCaseInput.length() - 1 && !bestMatch.empty()) {
+        const std::vector<std::string>& possibleResponses = responseMap[bestMatch];
+        int index = std::rand() % possibleResponses.size();
+        response = possibleResponses[index];
+    }
+
+    if (lowerCaseInput == previousQuery)
+    {
         response = "We've already discussed that. Let's talk about something else.";
     }
-    else if (lowerCaseInput == "ok" || lowerCaseInput == "okay") {
+    if (lowerCaseInput == "ok" || lowerCaseInput == "okay" || lowerCaseInput == "thx" || lowerCaseInput == "ty" || lowerCaseInput == "thank you" || lowerCaseInput == "thanks")
+    {
         response = "If you still have questions, feel free to ask!";
+    }
+    if (lowerCaseInput == "my age" || lowerCaseInput == "what is my age" || lowerCaseInput == "what is my age?") {
+        response = "Your age is " + std::to_string(std::rand() % 101);
     }
 
     previousQuery = lowerCaseInput;
+
     return response;
 }
+
 
 int main() {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
