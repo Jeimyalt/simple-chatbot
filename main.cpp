@@ -6,13 +6,12 @@
 #include <ctime>
 #include <Windows.h>
 #include <thread>
-#include <regex>
 #include "responses.h"
 
 std::string previousQuery = "";
 
 bool hasSlur(const std::string& userInput) {
-    std::vector<std::string> slurs = {
+    static const std::vector<std::string> slurs = {
         "fag",
         "fags",
         "faggot",
@@ -20,8 +19,8 @@ bool hasSlur(const std::string& userInput) {
         "nigger",
         "niggers",
         "nig",
-        "nigs",
-        // Add more slurs as needed
+        "nigs"
+        // Add more slurs if needed
     };
 
     std::string lowerCaseInput = userInput;
@@ -44,9 +43,7 @@ std::string generateResponse(const std::string& userInput) {
     for (const auto& pair : responseMap) {
         const std::string& keyword = pair.first;
         std::string pattern = "\\b" + keyword + "\\b";
-        std::regex regexPattern(pattern, std::regex_constants::icase);
-
-        if (std::regex_search(lowerCaseInput, regexPattern)) {
+        if (lowerCaseInput.find(keyword) != std::string::npos) {
             const std::vector<std::string>& possibleResponses = pair.second;
             int index = std::rand() % possibleResponses.size();
             response = possibleResponses[index];
@@ -82,24 +79,12 @@ int main() {
         }
 
         if (hasSlur(userInput)) {
-            std::cout << "Sammygpt: Slur detected. Closing the program." << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(700));
-            exit(0);
-        }
-
-        if (userInput == "bye") {
-            std::cout << "Goodbye.\n";
+            std::cout << "Slur detected. Closing the program." << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             break;
         }
 
-        if (userInput == "goodbye") {
-            std::cout << "Goodbye.\n";
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            break;
-        }
-
-        if (userInput == "ciao") {
+        if (userInput == "bye" || userInput == "goodbye" || userInput == "ciao") {
             std::cout << "Goodbye.\n";
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             break;
