@@ -9,6 +9,7 @@
 #include "responses.h"
 
 std::string previousQuery = "";
+bool isAskingMainResponse = false; // Added flag to track if a main response is being asked
 
 bool hasSlur(const std::string& userInput) {
     static const std::vector<std::string> slurs = {
@@ -19,8 +20,11 @@ bool hasSlur(const std::string& userInput) {
         "nigger",
         "niggers",
         "nig",
-        "nigs"
-        // Add more slurs if needed
+        "nigs",
+        "kys",
+        "kill yourself",
+        "end yourself",
+        "end it all"
     };
 
     std::string lowerCaseInput = userInput;
@@ -69,23 +73,29 @@ std::string generateResponse(const std::string& userInput) {
         response = possibleResponses[index];
     }
 
-    if (lowerCaseInput == previousQuery)
-    {
+    if (lowerCaseInput == previousQuery) {
         response = "We've already discussed that. Let's talk about something else.";
     }
-    if (lowerCaseInput == "ok" || lowerCaseInput == "okay" || lowerCaseInput == "thx" || lowerCaseInput == "ty" || lowerCaseInput == "thank you" || lowerCaseInput == "thanks")
-    {
-        response = "If you still have questions, feel free to ask!";
+
+    if (!isAskingMainResponse) {
+        if (lowerCaseInput == "ok" || lowerCaseInput == "okay" || lowerCaseInput == "thx" || lowerCaseInput == "ty" || lowerCaseInput == "thank you" || lowerCaseInput == "thanks") {
+            response = "If you still have questions, feel free to ask!";
+            isAskingMainResponse = true;
+        }
+
+        if (lowerCaseInput == "my age" || lowerCaseInput == "what is my age" || lowerCaseInput == "what is my age?") {
+            response = "Your age is " + std::to_string(std::rand() % 101);
+            isAskingMainResponse = true;
+        }
     }
-    if (lowerCaseInput == "my age" || lowerCaseInput == "what is my age" || lowerCaseInput == "what is my age?") {
-        response = "Your age is " + std::to_string(std::rand() % 101);
+    else {
+        isAskingMainResponse = false;
     }
 
     previousQuery = lowerCaseInput;
 
     return response;
 }
-
 
 int main() {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
